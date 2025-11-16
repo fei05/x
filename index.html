@@ -13,15 +13,15 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0f172a', // 深邃海军蓝（主背景）
-                        secondary: '#3b82f6', // 明亮天蓝（主交互色）
-                        accent: '#f97316', // 活力橙（强调色）
-                        dark: '#030712', // 近黑深蓝（模块背景）
-                        'dark-light': '#1e293b', // 浅深蓝（卡片背景）
-                        'dark-lighter': '#334155', // 更浅深蓝（按钮默认态）
-                        'text-primary': '#f8fafc', // 亮白主文本
-                        'text-secondary': '#94a3b8', // 浅灰辅助文本
-                    }
+                        primary: '#165DFF',
+                        secondary: '#FF7D00',
+                        dark: '#0F172A',
+                        'dark-glass': 'rgba(15, 23, 42, 0.85)',
+                        'card-bg': 'rgba(30, 41, 59, 0.7)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
                 }
             }
         }
@@ -30,141 +30,244 @@
         @layer utilities {
             .scrollbar-hide::-webkit-scrollbar { display: none; }
             .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+            .text-gradient { background-clip: text; -webkit-background-clip: text; color: transparent; }
+            .glass-effect { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+            .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+            .hover-lift:hover { transform: translateY(-5px); }
         }
     </style>
     <style>
-        /* 基础样式调整 */
-        body { background-color: #030712; color: #f8fafc; font-family: system-ui, sans-serif; }
-        
-        /* 标题样式优化 */
-        .section-title { color: #ffffff !important; } /* 资源下载标题白色 */
-        .section-title::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -8px; 
-            left: 0; 
-            width: 80px; 
-            height: 3px; 
-            background: linear-gradient(to right, #3b82f6, #f97316); 
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0A0F1C;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(22, 93, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 75% 75%, rgba(255, 125, 0, 0.1) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: #F8FAFC;
         }
         
-        /* 模块标题白色 */
-        .module-title { color: #ffffff !important; }
+        /* 粒子背景效果 */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(22, 93, 255, 0.1);
+            animation: float 15s infinite ease-in-out;
+        }
         
-        /* 复制按钮文字白色 */
-        .copy-btn { color: #ffffff !important; }
-        .copy-btn:hover { background-color: #3b82f6; color: white; }
-        .copy-btn.copied { background-color: #10b981; color: white; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-30px) translateX(20px); }
+        }
         
-        /* 下载按钮优化 */
-        .download-btn { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        /* 标题动画 */
+        .section-title {
+            position: relative;
+            background-image: linear-gradient(90deg, #165DFF, #FF7D00);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #165DFF, #FF7D00);
+            border-radius: 3px;
+        }
+        
+        /* 模块卡片效果 */
+        .module-card {
+            border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
         }
-        .download-btn:nth-child(2) {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-        }
-        .download-btn:hover { 
-            background-color: #3b82f6; 
-            transform: translateY(-2px); 
+        
+        .module-card:hover {
+            border-color: rgba(22, 93, 255, 0.3);
+            box-shadow: 0 10px 30px -5px rgba(22, 93, 255, 0.1);
         }
         
-        /* 输入框文字颜色 */
-        input { color: #f8fafc !important; }
+        /* 按钮效果 */
+        .download-btn {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transition: all 0.4s ease;
+        }
         
-        /* 辅助文本颜色 */
-        .text-gray-400 { color: #94a3b8 !important; }
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+        
+        .download-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* 复制按钮动画 */
+        .copy-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 输入框效果 */
+        .url-input {
+            transition: all 0.3s ease;
+        }
+        
+        .url-input:focus-within {
+            border-color: rgba(22, 93, 255, 0.5);
+            box-shadow: 0 0 0 2px rgba(22, 93, 255, 0.1);
+        }
+        
+        /* 导航栏滚动效果 */
+        .navbar {
+            transition: background-color 0.3s ease, padding 0.3s ease;
+        }
+        
+        /* 回到顶部按钮动画 */
+        #back-to-top {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen">
+    <!-- 粒子背景 -->
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
     <!-- 导航栏 -->
-    <nav class="bg-dark-light bg-opacity-90 fixed w-full z-50">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center">
-                <img src="https://gitee.com/t-v/tt/raw/t/t/hx.gif" alt="" class="h-10">
-                <span class="ml-2 text-xl font-bold text-white">恒轩影视</span>
+    <nav class="navbar bg-dark-glass glass-effect fixed w-full z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://gitee.com/t-v/tt/raw/t/t/hx.gif" alt="恒轩影视" class="h-10 w-10 object-contain rounded-lg shadow-lg">
+                <span class="text-xl font-bold bg-gradient-to-r from-primary to-secondary text-gradient">恒轩影视</span>
             </div>
-            <a href="#download" class="text-white hover:text-secondary transition duration-300">下载中心</a>
+            <a href="#download" class="text-white hover:text-primary transition-colors duration-300 flex items-center gap-1">
+                <i class="fa fa-download"></i>
+                <span>下载中心</span>
+            </a>
         </div>
     </nav>
 
+    <!-- 主视觉区 -->
+    <header class="pt-32 pb-20 relative z-10">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold mb-6 leading-tight">
+                <span class="bg-gradient-to-r from-primary to-secondary text-gradient">一站式</span> 影视娱乐资源平台
+            </h1>
+            <p class="text-gray-300 max-w-2xl mx-auto text-lg mb-10">提供高品质影视、音乐和阅读资源，简单易用，一键获取你喜爱的内容</p>
+            <a href="#download" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-primary/30">
+                立即获取 <i class="fa fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </header>
+
     <!-- 影视下载区 -->
-    <section id="download" class="py-24 bg-dark">
+    <section id="download" class="py-16 relative z-10">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-16 text-center section-title mx-auto">资源下载</h2>
+            <h2 class="text-3xl font-bold mb-16 text-center section-title">资源下载</h2>
 
             <!-- 影视模块 -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-8 text-center module-title">影视</h3>
-                <!-- 使用教程 -->
-                <div class="bg-dark-light p-6 rounded-xl mb-8">
-                    <h4 class="text-lg font-bold mb-3 flex items-center"><i class="fa fa-info-circle text-secondary mr-2"></i>使用教程</h4>
-                    <p class="text-gray-400 mb-4">下载软件后，复制以下链接到「设置-点播-使用配置接口」</p>
-                    <div class="flex flex-col md:flex-row items-center gap-4">
-                        <div class="flex-1 bg-dark rounded-lg p-3 flex items-center">
-                            <input type="text" id="config-url-1" value="http://suo.im/7ooy7" class="bg-transparent border-none outline-none text-white flex-1" readonly>
-                            <button id="copy-btn-1" class="copy-btn ml-2 px-4 py-2 rounded-lg bg-dark-lighter">
-                                <i class="fa fa-copy mr-1"></i>复制
-                            </button>
-                        </div>
-                        <div id="copy-notification-1" class="hidden text-green-500"><i class="fa fa-check-circle mr-1"></i>已复制</div>
+            <div class="mb-16 module-card bg-card-bg glass-effect rounded-2xl p-6 md:p-8">
+                <div class="flex items-center justify-center mb-8">
+                    <div class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+                        <i class="fa fa-film text-2xl text-primary"></i>
                     </div>
+                    <h3 class="text-2xl font-bold">影视</h3>
                 </div>
+                
+                <!-- 使用教程 -->
+                <div class="bg-dark/50 rounded-xl p-5 mb-8 border border-white/5">
+                    <h4 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-info-circle text-primary mr-2"></i>使用教程
+                    </h4>
+                    <p class="text-gray-300 mb-4">下载软件后，复制以下链接到「设置-点播-使用配置接口」</p>
+                    <div class="flex flex-col md:flex-row items-center gap-3 url-input bg-dark/70 rounded-lg p-3 border border-white/10">
+                        <input type="text" id="config-url-1" value="http://suo.im/7ooy7" class="bg-transparent border-none outline-none text-white flex-1" readonly>
+                        <button id="copy-btn-1" class="copy-btn px-4 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary">
+                            <i class="fa fa-copy mr-1"></i>复制
+                        </button>
+                    </div>
+                    <div id="copy-notification-1" class="hidden mt-2 text-green-400 text-sm"><i class="fa fa-check-circle mr-1"></i>已复制到剪贴板</div>
+                </div>
+                
                 <!-- 下载按钮 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <a href="https://d.kstore.dev/download/12212/影视.apk" target="_blank" class="download-btn block text-white font-bold py-3 px-6 rounded-lg text-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://d.kstore.dev/download/12212/影视.apk" target="_blank" class="download-btn hover-lift block text-white font-medium py-4 px-6 rounded-xl text-center bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/10">
                         <i class="fa fa-android mr-2"></i>手机版下载
                     </a>
-                    <a href="https://cns.xn--yhqu5zs87a.top/https://github.com/FongMi/Release/raw/fongmi/apk/release/leanback-armeabi_v7a.apk" target="_blank" class="download-btn block text-white font-bold py-3 px-6 rounded-lg text-center">
+                    <a href="https://cns.xn--yhqu5zs87a.top/https://github.com/FongMi/Release/raw/fongmi/apk/release/leanback-armeabi_v7a.apk" target="_blank" class="download-btn hover-lift block text-white font-medium py-4 px-6 rounded-xl text-center bg-gradient-to-r from-secondary to-secondary/80 shadow-lg shadow-secondary/10">
                         <i class="fa fa-television mr-2"></i>电视版下载
                     </a>
                 </div>
             </div>
 
             <!-- 音乐模块 -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-8 text-center module-title">音乐</h3>
-                <div class="bg-dark-light p-6 rounded-xl mb-8">
-                    <h4 class="text-lg font-bold mb-3 flex items-center"><i class="fa fa-info-circle text-secondary mr-2"></i>使用教程</h4>
-                    <p class="text-gray-400 mb-4">下载软件后，复制以下链接到「设置-插件管理-网络插件-使用配置接口」</p>
-                    <div class="flex flex-col md:flex-row items-center gap-4">
-                        <div class="flex-1 bg-dark rounded-lg p-3 flex items-center">
-                            <input type="text" id="config-url-2" value="https://gitee.com/t-v/tt/raw/t/yinyue.json" class="bg-transparent border-none outline-none text-white flex-1" readonly>
-                            <button id="copy-btn-2" class="copy-btn ml-2 px-4 py-2 rounded-lg bg-dark-lighter">
-                                <i class="fa fa-copy mr-1"></i>复制
-                            </button>
-                        </div>
-                        <div id="copy-notification-2" class="hidden text-green-500"><i class="fa fa-check-circle mr-1"></i>已复制</div>
+            <div class="mb-16 module-card bg-card-bg glass-effect rounded-2xl p-6 md:p-8">
+                <div class="flex items-center justify-center mb-8">
+                    <div class="w-14 h-14 rounded-full bg-secondary/20 flex items-center justify-center mr-4">
+                        <i class="fa fa-music text-2xl text-secondary"></i>
                     </div>
+                    <h3 class="text-2xl font-bold">音乐</h3>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <a href="https://d.kstore.dev/download/12212/音乐.apk" target="_blank" class="download-btn block text-white font-bold py-3 px-6 rounded-lg text-center">
+                
+                <div class="bg-dark/50 rounded-xl p-5 mb-8 border border-white/5">
+                    <h4 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-info-circle text-secondary mr-2"></i>使用教程
+                    </h4>
+                    <p class="text-gray-300 mb-4">下载软件后，复制以下链接到「设置-插件管理-网络插件-使用配置接口」</p>
+                    <div class="flex flex-col md:flex-row items-center gap-3 url-input bg-dark/70 rounded-lg p-3 border border-white/10">
+                        <input type="text" id="config-url-2" value="https://gitee.com/t-v/tt/raw/t/yinyue.json" class="bg-transparent border-none outline-none text-white flex-1" readonly>
+                        <button id="copy-btn-2" class="copy-btn px-4 py-2 rounded-lg bg-secondary/20 hover:bg-secondary/30 text-secondary">
+                            <i class="fa fa-copy mr-1"></i>复制
+                        </button>
+                    </div>
+                    <div id="copy-notification-2" class="hidden mt-2 text-green-400 text-sm"><i class="fa fa-check-circle mr-1"></i>已复制到剪贴板</div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://d.kstore.dev/download/12212/音乐.apk" target="_blank" class="download-btn hover-lift block text-white font-medium py-4 px-6 rounded-xl text-center bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/10">
                         <i class="fa fa-android mr-2"></i>手机版下载
                     </a>
-                    <a href="https://d.kstore.dev/download/12212/音乐电脑版.exe" target="_blank" class="download-btn block text-white font-bold py-3 px-6 rounded-lg text-center">
+                    <a href="https://d.kstore.dev/download/12212/音乐电脑版.exe" target="_blank" class="download-btn hover-lift block text-white font-medium py-4 px-6 rounded-xl text-center bg-gradient-to-r from-secondary to-secondary/80 shadow-lg shadow-secondary/10">
                         <i class="fa fa-desktop mr-2"></i>电脑版下载
                     </a>
                 </div>
             </div>
 
             <!-- 阅读模块 -->
-            <div>
-                <h3 class="text-2xl font-bold mb-8 text-center module-title">阅读</h3>
-                <div class="bg-dark-light p-6 rounded-xl mb-8">
-                    <h4 class="text-lg font-bold mb-3 flex items-center"><i class="fa fa-info-circle text-secondary mr-2"></i>使用教程</h4>
-                    <p class="text-gray-400 mb-4">下载软件后，复制以下链接到「设置-书源管理-网络导入-使用配置接口」</p>
-                    <div class="flex flex-col md:flex-row items-center gap-4">
-                        <div class="flex-1 bg-dark rounded-lg p-3 flex items-center">
-                            <input type="text" id="config-url-3" value="https://gitee.com/t-v/tt/raw/t/yuedu.json" class="bg-transparent border-none outline-none text-white flex-1" readonly>
-                            <button id="copy-btn-3" class="copy-btn ml-2 px-4 py-2 rounded-lg bg-dark-lighter">
-                                <i class="fa fa-copy mr-1"></i>复制
-                            </button>
-                        </div>
-                        <div id="copy-notification-3" class="hidden text-green-500"><i class="fa fa-check-circle mr-1"></i>已复制</div>
+            <div class="module-card bg-card-bg glass-effect rounded-2xl p-6 md:p-8">
+                <div class="flex items-center justify-center mb-8">
+                    <div class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+                        <i class="fa fa-book text-2xl text-primary"></i>
                     </div>
+                    <h3 class="text-2xl font-bold">阅读</h3>
                 </div>
-                <div class="grid grid-cols-1 gap-6">
-                    <a href="https://d.kstore.dev/download/12212/阅读.apk" target="_blank" class="download-btn block text-white font-bold py-3 px-6 rounded-lg text-center">
+                
+                <div class="bg-dark/50 rounded-xl p-5 mb-8 border border-white/5">
+                    <h4 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-info-circle text-primary mr-2"></i>使用教程
+                    </h4>
+                    <p class="text-gray-300 mb-4">下载软件后，复制以下链接到「设置-书源管理-网络导入-使用配置接口」</p>
+                    <div class="flex flex-col md:flex-row items-center gap-3 url-input bg-dark/70 rounded-lg p-3 border border-white/10">
+                        <input type="text" id="config-url-3" value="https://gitee.com/t-v/tt/raw/t/yuedu.json" class="bg-transparent border-none outline-none text-white flex-1" readonly>
+                        <button id="copy-btn-3" class="copy-btn px-4 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary">
+                            <i class="fa fa-copy mr-1"></i>复制
+                        </button>
+                    </div>
+                    <div id="copy-notification-3" class="hidden mt-2 text-green-400 text-sm"><i class="fa fa-check-circle mr-1"></i>已复制到剪贴板</div>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <a href="https://d.kstore.dev/download/12212/阅读.apk" target="_blank" class="download-btn hover-lift block text-white font-medium py-4 px-6 rounded-xl text-center bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/10">
                         <i class="fa fa-android mr-2"></i>手机版下载
                     </a>
                 </div>
@@ -173,66 +276,130 @@
     </section>
 
     <!-- 底部 -->
-    <footer class="bg-dark-light py-8">
-        <div class="container mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>© 2025  保留所有权利</p>
+    <footer class="bg-dark-glass glass-effect py-8 mt-20 relative z-10">
+        <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+            <p>© 2025 恒轩影视 保留所有权利</p>
             <p class="mt-2">本站资源仅供测试学习，请勿用于商业用途，侵权请联系删除</p>
         </div>
     </footer>
 
     <!-- 返回顶部 -->
-    <button id="back-to-top" class="fixed bottom-8 right-8 bg-secondary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 z-50">
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary/90 hover:bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 z-50">
         <i class="fa fa-arrow-up"></i>
     </button>
 
     <script>
+        // 创建粒子背景
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机大小和位置
+                const size = Math.random() * 100 + 50;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
         // 复制功能
         function initCopyBtn(btnId, urlId, notifyId) {
             document.getElementById(btnId).addEventListener('click', function() {
                 const urlInput = document.getElementById(urlId);
                 urlInput.select();
-                document.execCommand('copy');
-                
-                const btn = document.getElementById(btnId);
-                const notify = document.getElementById(notifyId);
-                
-                btn.classList.add('copied');
-                btn.innerHTML = '<i class="fa fa-check mr-1"></i>已复制';
-                notify.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    btn.classList.remove('copied');
-                    btn.innerHTML = '<i class="fa fa-copy mr-1"></i>复制';
-                    notify.classList.add('hidden');
-                }, 2000);
+                navigator.clipboard.writeText(urlInput.value).then(() => {
+                    const btn = document.getElementById(btnId);
+                    const notify = document.getElementById(notifyId);
+                    
+                    // 保存原始内容
+                    const originalHTML = btn.innerHTML;
+                    
+                    // 显示复制成功状态
+                    btn.innerHTML = '<i class="fa fa-check mr-1"></i>已复制';
+                    btn.classList.add('bg-green-500/20', 'text-green-400');
+                    btn.classList.remove('hover:bg-primary/30', 'hover:bg-secondary/30');
+                    notify.classList.remove('hidden');
+                    
+                    // 恢复原始状态
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.classList.remove('bg-green-500/20', 'text-green-400');
+                        btn.classList.add(btnId.includes('2') ? 'hover:bg-secondary/30' : 'hover:bg-primary/30');
+                        notify.classList.add('hidden');
+                    }, 2000);
+                });
             });
         }
-        initCopyBtn('copy-btn-1', 'config-url-1', 'copy-notification-1');
-        initCopyBtn('copy-btn-2', 'config-url-2', 'copy-notification-2');
-        initCopyBtn('copy-btn-3', 'config-url-3', 'copy-notification-3');
-
-        // 返回顶部
-        document.getElementById('back-to-top').addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // 滚动显示返回顶部按钮
-        window.addEventListener('scroll', () => {
-            const backBtn = document.getElementById('back-to-top');
-            if (window.pageYOffset > 300) {
-                backBtn.classList.remove('opacity-0', 'invisible');
-                backBtn.classList.add('opacity-100', 'visible');
+        
+        // 导航栏滚动效果
+        function handleNavbarScroll() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'shadow-lg', 'shadow-dark/50');
+                navbar.classList.remove('py-4');
             } else {
-                backBtn.classList.add('opacity-0', 'invisible');
-                backBtn.classList.remove('opacity-100', 'visible');
+                navbar.classList.add('py-4');
+                navbar.classList.remove('py-2', 'shadow-lg', 'shadow-dark/50');
             }
-        });
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 创建粒子背景
+            createParticles();
+            
+            // 初始化复制按钮
+            initCopyBtn('copy-btn-1', 'config-url-1', 'copy-notification-1');
+            initCopyBtn('copy-btn-2', 'config-url-2', 'copy-notification-2');
+            initCopyBtn('copy-btn-3', 'config-url-3', 'copy-notification-3');
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', handleNavbarScroll);
+            handleNavbarScroll(); // 初始检查
+            
+            // 返回顶部按钮
+            const backBtn = document.getElementById('back-to-top');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backBtn.classList.remove('opacity-0', 'invisible');
+                    backBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backBtn.classList.add('opacity-0', 'invisible');
+                    backBtn.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        const navbarHeight = document.querySelector('.navbar').offsetHeight;
+                        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
             });
         });
     </script>
